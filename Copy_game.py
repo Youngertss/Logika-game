@@ -15,7 +15,7 @@ class Player(sprite.Sprite):
         self.imagel = transform.scale(image.load(player_imagel), (size_x, size_y))
         self.imager = transform.scale(image.load(player_imager), (size_x, size_y))
         self.speed_def=player_speed
-        self.speed = player_speed
+        self.speed = player_speed+10
         self.list_img=[self.imaged,self.imageu,self.imagel,self.imager]
         self.s=0
         # каждый спрайт должен хранить свойство rect - прямоугольник, в который он вписан
@@ -28,20 +28,8 @@ class Player(sprite.Sprite):
     # метод для управления спрайтом стрелками клавиатуры
     def update(self):
         global width
+        global ch
         keys = key.get_pressed()
-        if keys[K_LEFT] and x!=2:
-            self.rect.x -= self.speed
-            self.s=2
-        elif keys[K_a] and x!=2:
-            self.rect.x -= self.speed
-            self.s=2
-        
-        if keys[K_RIGHT] and x !=1 :
-            self.rect.x += self.speed
-            self.s=3
-        elif keys[K_d] and x !=1 :
-            self.rect.x += self.speed
-            self.s=3
             
         if keys[K_UP] and z !=2:
             self.rect.y -= self.speed
@@ -57,9 +45,24 @@ class Player(sprite.Sprite):
             self.rect.y += self.speed
             self.s=0
 
-        if keys[K_LSHIFT]:
+        if keys[K_LEFT] and x!=2:
+            self.rect.x -= self.speed
+            self.s=2
+        elif keys[K_a] and x!=2:
+            self.rect.x -= self.speed
+            self.s=2
+        
+        if keys[K_RIGHT] and x !=1 :
+            self.rect.x += self.speed
+            self.s=3
+        elif keys[K_d] and x !=1 :
+            self.rect.x += self.speed
+            self.s=3
+        if keys[K_LSHIFT] and keys[K_LEFT] or keys[K_LSHIFT] and keys[K_a] or keys[K_LSHIFT] and keys[K_RIGHT] or keys[K_LSHIFT] and keys[K_d] or keys[K_LSHIFT] and keys[K_UP] or keys[K_LSHIFT] and keys[K_w] or keys[K_LSHIFT] and keys[K_DOWN] or keys[K_LSHIFT] and keys[K_s]:
             self.speed = self.speed_def+2
             width -= 2
+        elif keys[K_LSHIFT]:
+            width+=1
         if width<10:
             self.speed = self.speed_def
         if not keys[K_LSHIFT]:    
@@ -71,9 +74,9 @@ class Player(sprite.Sprite):
             width = 1
 
         if rv==1:
-            self.rect.x=10
+            self.rect.x=40
         if rv==2:
-            self.rect.x=730
+            self.rect.x=1780
 
 
 class Wall(sprite.Sprite):
@@ -116,14 +119,14 @@ player_imgu = "pl_up.png"
 player_imgd = "pl_down.png"
 
 #параметры окна
-win_width=800
-win_height=600
-window=display.set_mode((win_width,win_height))
+win_width=1920
+win_height=1040
+window=display.set_mode((0,0),RESIZABLE)
 display.set_caption("Logika-game")
 
 but_menu=transform.scale(image.load(menu_img),(150, 75))
 but_play=transform.scale(image.load(play_img),(200, 150))
-but_quit=transform.scale(image.load(quit_img),(130, 60))
+but_quit=transform.scale(image.load(quit_img),(120, 60))
 background_lbl=transform.scale(image.load(bg_lobby_img),(win_width, win_height))
 background1=transform.scale(image.load(bg1_img),(win_width,win_height))
 background2=transform.scale(image.load(bg2_img),(win_width,win_height))
@@ -134,23 +137,23 @@ rv=0
 
 
 #спрайт игрока
-geroy=Player(player_imgd,player_imgu,player_imgl,player_imgr, 250,270,60,80,4)
+geroy=Player(player_imgd,player_imgu,player_imgl,player_imgr, 250,270,120,160,15)
 ##############################################################################
 room1w=sprite.Group()
 room2w=sprite.Group()
 
 
-door1=Wall(15,200,795,200,103,51,0)
-door2=Wall(15,200,-10,200,103,51,0)
+door1=Wall(15,200,1905,400,103,51,0)
+door2=Wall(15,200,0,400,103,51,0)
 
 doorG=[]
 doorG.append(door1)
 
-wr1=Wall(15,200,785,0,0,0,0)
-wr2=Wall(15,300,785,400,0,0,0)
-wd1=Wall(800,15,0,575,0,0,0)
-wl1=Wall(15,700,10,0,0,0,0)
-wu1=Wall(800,15,0,1,0,0,0)
+wr1=Wall(15,400,1905,0,0,0,0)
+wr2=Wall(15,700,1905,600,0,0,0)
+wd1=Wall(1920,15,0,1025,0,0,0)
+wl1=Wall(15,1040,0,0,0,0,0)
+wu1=Wall(1920,15,0,0,0,0,0)
 
 wd1_2=Wall(800,15,0,575,0,0,0)
 
@@ -169,6 +172,9 @@ wallsL=sprite.Group()
 wallsD=sprite.Group()
 wallsU=sprite.Group()
 ##############################################################################
+ch=True
+clock=time.Clock()
+
 finish=False
 speed_vis = False
 run=True
@@ -263,5 +269,16 @@ while run:
                         
 
     display.update()
-    # цикл срабатывает каждую 0.01 секунд
-    time.delay(5) 
+    # цикл срабатывает каждую 0.06 секунд
+    clock.tick(60)
+    
+
+"""quit()
+window=display.set_mode((0,0),RESIZABLE)
+while ch:
+    window.blit(background2,(0,0))
+    for e in event.get():
+        if e.type==QUIT:
+            ch=False
+    display.update()
+    time.delay(1)"""
